@@ -13,12 +13,14 @@ public class Player {
     private final float speed = 200f;
     private final float jumpStrength = 400f;
     private final float gravity = -15f;
-    private boolean isJumping = false; //Si salta o no
-    private boolean isKicking = false; //Si patea o no
-    
-    public Player() {
+    private boolean isJumping = false; // Si salta o no
+    private boolean isKicking = false; // Si patea o no
+    private Ball ball; // Referencia a la pelota
+
+    public Player(Ball ball) {
+        this.ball = ball; // Inicializa la referencia a la pelota
         image = new Texture("messi.png");
-        botin = new Texture ("botin.png");
+        botin = new Texture("botin.png");
         posX = 140;
         posY = 10;
     }
@@ -39,14 +41,13 @@ public class Player {
             isJumping = true;
         }
         
-        //Patear
-        
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) { // Con p pateas
+        // Patear
+        if (Gdx.input.isKeyPressed(Input.Keys.P)) { // Con P pateas
             isKicking = true;
+            kickBall(); // Patea la pelota
         } else {
             isKicking = false; // Detener el botín cuando no se está pateando
         }
-        
 
         // Aplicar gravedad
         velocityY += gravity;
@@ -67,34 +68,40 @@ public class Player {
             velocityX = 0;
         }
         
-        float width = image.getWidth() * 0.5f; // Ancho del jugador
-        if (posX + width > Gdx.graphics.getWidth()) {
-            posX = Gdx.graphics.getWidth() - width; // Ajusta la posición del jugador
-        }
-        
-        
+        // Verificar colisión con la pelota
+        checkCollisionWithBall();
         
         Gdx.app.log("Player Position", "X: " + posX + ", Y: " + posY);
-        
+    }
+
+    private void kickBall() {
+        float kickForce = 400f; // Ajusta la fuerza de la patada según sea necesario
+        float direction = (ball.getX() > posX) ? 1 : -1; // Determina la dirección de la patada
+        ball.kick(kickForce, direction); // Patea la pelota
+    }
+
+    private void checkCollisionWithBall() {
+        if (ball.getX() + ball.getWidth() > posX && ball.getX() < posX + image.getWidth() * 0.5f &&
+            ball.getY() + ball.getHeight() > posY && ball.getY() < posY + image.getHeight() * 0.5f) {
+            // Si hay colisión, ajustar la posición de la pelota
+            ball.kick(100f, ball.getX() > posX ? 1 : -1); // Ajustar la dirección de la patada
+        }
     }
 
     public void render(SpriteBatch batch) {
-    	
-    	float width = image.getWidth() * 0.5f;  // Cambia el tamaño al 50%  0.31147242
-    	float height = image.getHeight() * 0.5f;
-    	
+        float width = image.getWidth() * 0.5f; // Cambia el tamaño al 50%
+        float height = image.getHeight() * 0.5f;
+
         batch.draw(image, posX, posY, width, height);
         
         if (isKicking) {
             // Ajusta la posición del botín en relación con el jugador
-        	float bootPosX = posX + width - (botin.getWidth() * 0.1f); // Alineado a la derecha del jugador
-        	float bootPosY = posY + height * 0.05f;
+            float bootPosX = posX + width - (botin.getWidth() * 0.1f); // Alineado a la derecha del jugador
+            float bootPosY = posY + height * 0.05f;
             
             float bootScale = 0.1f;
             float bootWidth = botin.getWidth() * bootScale;
             float bootHeight = botin.getHeight() * bootScale;
-            
-           
             
             if (bootPosX < 0) {
                 bootPosX = 0; // Límite izquierdo
@@ -109,12 +116,7 @@ public class Player {
             }
 
             batch.draw(botin, bootPosX, bootPosY, bootWidth, bootHeight);
-            
-            
-            
         }
-        
-        
     }
 
     public void dispose() {
