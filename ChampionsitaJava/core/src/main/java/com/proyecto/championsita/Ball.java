@@ -1,53 +1,55 @@
 package com.proyecto.championsita;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+
 public class Ball {
-    private Texture image;
-    private float posX, posY;
-    private float velocityX, velocityY;
-    private final float gravity = -9.81f; // Ajusta la gravedad para que caiga más rápido
-    private boolean isFalling = true;
-    public Ball() {
-        image = new Texture("pelota.png"); // Asegúrate de tener esta textura
-        posX = Gdx.graphics.getWidth() / 2 - image.getWidth() * 0.25f; // Centrado en el inicio
-        posY = Gdx.graphics.getHeight() - image.getHeight() * 0.25f; // Comienza en la parte superior
+    public float posX, posY;
+    public Vector2 velocity = new Vector2(); // Hacer pública la velocidad para que se pueda acceder desde el jugador
+    public float size = 30f;
+    private final float gravity = -800f; // Aumentar la gravedad para un efecto más realista
+    private Texture texture;
+
+    public Ball(float startX, float startY, String texturePath) {
+        posX = startX;
+        posY = startY;
+        velocity.set(200f, 0); // Velocidad inicial horizontal
+        texture = new Texture(Gdx.files.internal(texturePath));
     }
-    public void kick(float force, float direction) {
-        // Cambia la velocidad de la pelota al patearla
-        velocityX = direction * force; // Cambia la dirección de la patada
-        velocityY = 200f; // Cambia la velocidad vertical para que no sea tan rápida
-    }
+    
     public void update(float deltaTime) {
-        if (isFalling) {
-            velocityY += gravity; // Aplica la gravedad
+        // Aplicar gravedad
+        velocity.y += gravity * deltaTime;
+        posY += velocity.y * deltaTime;
+
+        // Evitar que la pelota caiga por debajo de un cierto nivel
+        if (posY <= 10) {
+            posY = 10;
+            velocity.y = -velocity.y * 0.8f; // Rebote con pérdida de energía
         }
-        posX += velocityX * deltaTime;
-        posY += velocityY * deltaTime;
-        // Evitar que la pelota atraviese el suelo
-        if (posY < 10) {
-            posY = 10; // Ajustar la posición en el suelo
-            isFalling = false; // Deja de caer
-            velocityY = 0; // Detener la velocidad vertical
+
+
+        // Mantener la pelota dentro de los límites del campo
+        if (posX < 0) {
+            posX = 0;
+            velocity.x = -velocity.x * 0.9f; // Rebote lateral con pérdida
+        } else if (posX + size > Gdx.graphics.getWidth()) {
+            posX = Gdx.graphics.getWidth() - size;
+            velocity.x = -velocity.x * 0.9f; // Rebote lateral con pérdida
         }
+
+        posX += velocity.x * deltaTime; // Movimiento horizontal
     }
+
     public void render(SpriteBatch batch) {
-        float scale = 0.25f; // Cambiar el tamaño de la pelota
-        batch.draw(image, posX, posY, image.getWidth() * scale, image.getHeight() * scale);
+        batch.draw(texture, posX, posY, size, size);
     }
+
     public void dispose() {
-        image.dispose();
-    }
-    public float getX() {
-        return posX;
-    }
-    public float getY() {
-        return posY;
-    }
-    public float getWidth() {
-        return image.getWidth() * 0.25f; // Ajustar el tamaño
-    }
-    public float getHeight() {
-        return image.getHeight() * 0.25f; // Ajustar el tamaño
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 }
