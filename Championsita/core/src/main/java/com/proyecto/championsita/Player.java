@@ -12,23 +12,24 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player {
-    private static final float PPM = 100; // Pixeles por metro
+    //private static final float PPM = 100; // Pixeles por metro
 
+    private SpriteBatch batch;
     private boolean isJumping = false;
-    private float jumpForce = 5f; // Ajusta este valor según sea necesario
+    private float jumpForce = 5f; // Ajusta este valor segï¿½n sea necesario
     private Body body;
     private Texture texture; // Textura adicional para el jugador
     private boolean canJump = true;
-    private float maxJumpTime = 0.3f; // Tiempo máximo en el aire
+    private float maxJumpTime = 0.3f; // Tiempo mï¿½ximo en el aire
     private float jumpTimeCounter = 0;
 
-    private float width; // Ancho del jugador
-    private float height; // Altura del jugador
+    private float width = 100; // Ancho del jugador
+    private float height = 100; // Altura del jugador
 
     public Player(World world, float x, float y, float radius) {
         texture = new Texture("messi.png"); // Textura del jugador
 
-        // Escala de la textura en función de PPM
+        // Escala de la textura en funciï¿½n de PPM
         width = radius * 2; // Ancho del jugador en metros
         height = radius * 2; // Alto del jugador en metros
 
@@ -62,12 +63,13 @@ public class Player {
     }
 
     public void render(SpriteBatch batch) {
-        // Dibujar el jugador escalando según la cámara y el PPM
+   
         batch.draw(texture,
-                (body.getPosition().x - width / 2) * PPM, // Convertir a píxeles
-                (body.getPosition().y - height / 2) * PPM,
-                width * PPM,
-                height * PPM);
+                (body.getPosition().x - width /2 ), // Convertir a pï¿½xeles
+                (body.getPosition().y - height /2),
+                width,
+                height);
+
     }
 
     public void handleInput(Ball ball, boolean isPlayerA) {
@@ -97,7 +99,7 @@ public class Player {
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && canJump) {
                 jump();
             }
-            // Pateo con SHIFT DERECHO
+            // Pateo con CONTROL DERECHO
             if (Gdx.input.isKeyJustPressed(Input.Keys.CONTROL_RIGHT)) {
                 kick(ball);
             }
@@ -111,7 +113,7 @@ public class Player {
 
     private void kick(Ball ball) {
         float distance = body.getPosition().dst(ball.getBody().getPosition());
-        float maxKickDistance = 1f; // Distancia máxima para patear
+        float maxKickDistance = 1f; // Distancia mï¿½xima para patear
 
         if (distance <= maxKickDistance) {
             Vector2 direction = ball.getBody().getPosition().cpy().sub(body.getPosition()).nor();

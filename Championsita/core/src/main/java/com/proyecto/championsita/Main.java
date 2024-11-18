@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Main extends ApplicationAdapter {
-    private Menu menu; // Pantalla del menú
-    private boolean inMenu = true; // Comenzamos en el menú
+    private Menu menu; // Pantalla del menï¿½
+    private boolean inMenu = true; // Comenzamos en el menï¿½
 
     // Elementos del partido
     private OrthographicCamera camera;
@@ -27,7 +27,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         menu = new Menu();
-        menu.create(); // Crear el menú
+        menu.create(); // Crear el menï¿½
+        batch = new SpriteBatch();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class Main extends ApplicationAdapter {
             // Cambiar a la pantalla del partido
             if (menu.shouldStartMatch()) {
                 inMenu = false;
-                menu.dispose(); // Liberar recursos del menú
+                menu.dispose(); // Liberar recursos del menï¿½
                 initializeMatch(); // Inicializar el partido
             }
         } else {
@@ -47,7 +48,7 @@ public class Main extends ApplicationAdapter {
     }
 
     private void initializeMatch() {
-        // Configurar la cámara
+        // Configurar la cï¿½mara
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 16, 9); // 16 unidades de ancho por 9 de alto
 
@@ -57,9 +58,9 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
 
         // Cargar la textura del fondo
-        backgroundTexture = new Texture("stadium.png"); // Asegúrate de tener esta textura
+        backgroundTexture = new Texture("stadium.png"); // Asegï¿½rate de tener esta textura
 
-        // Crear las líneas del campo (invisibles)
+        // Crear las lï¿½neas del campo (invisibles)
         createFieldLines();
 
         // Crear la pelota
@@ -81,7 +82,7 @@ public class Main extends ApplicationAdapter {
 
         // Actualizar el mundo
         world.step(1 / 60f, 6, 2); // Avanza el mundo Box2D
-        camera.position.set(8, 4.5f, 0); // Centra la cámara
+        camera.position.set(8, 4.5f, 0); // Centra la cï¿½mara
         camera.update();
 
         // Actualizar jugadores
@@ -101,19 +102,19 @@ public class Main extends ApplicationAdapter {
         batch.end();
     }
 
-    // Método para crear la pelota
+    // Mï¿½todo para crear la pelota
     private void createBall() {
-        float ballRadius = 15f / 100; // 15 píxeles de diámetro, ajustado con PPM
+        float ballRadius = 30f / 100; // 15 pï¿½xeles de diï¿½metro, ajustado con PPM
         ball = new Ball(world, 8, 5, ballRadius, true);
     }
 
-    // Método para crear los jugadores
+    // Mï¿½todo para crear los jugadores
     private void createPlayers() {
         playerA = new Player(world, 6, 1, 0.5f); // Jugador A con radio de 0.5 metros
         playerB = new Player(world, 10, 1, 0.5f); // Jugador B con radio de 0.5 metros
     }
 
-    // Método para crear las líneas verdes del campo (suelo, paredes y techo)
+    // Mï¿½todo para crear las lï¿½neas verdes del campo (suelo, paredes y techo)
     private void createFieldLines() {
         createStaticBody(8, 0.5f, 16, 0.5f); // Suelo
         createStaticBody(0, 4.5f, 0.5f, 9);  // Pared izquierda
@@ -133,7 +134,7 @@ public class Main extends ApplicationAdapter {
 
         var fixtureDef = new com.badlogic.gdx.physics.box2d.FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.friction = 0.5f;
+        fixtureDef.friction = 10f;
 
         body.createFixture(fixtureDef);
         shape.dispose();

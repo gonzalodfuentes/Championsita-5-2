@@ -1,3 +1,5 @@
 ball.png
+juegazo.png
 libgdx.png
 messi.png
+stadium.png
